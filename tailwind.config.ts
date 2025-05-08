@@ -63,15 +63,15 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				nordic: {
-					blue: '#506D7F',
-					teal: '#88A0A8',
-					beige: '#E5D8C5',
-					charcoal: '#272F32',
-					white: '#F7F7F7',
-					navy: '#34495E',
-					gray: '#ADB9C3',
-					forest: '#3B6064'
+				lively: {
+					blue: '#3B82F6',
+					purple: '#8B5CF6',
+					pink: '#EC4899',
+					orange: '#F97316',
+					green: '#10B981',
+					yellow: '#FBBF24',
+					red: '#EF4444',
+					teal: '#14B8A6'
 				}
 			},
 			borderRadius: {

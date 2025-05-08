@@ -24,7 +24,7 @@ export function StatisticsSection() {
             key={stat.name}
             className="rounded-lg border bg-card p-4 shadow-sm transition-all hover:shadow-md"
           >
-            <div className="text-2xl font-bold text-nordic-blue dark:text-nordic-teal">
+            <div className="text-2xl font-bold text-primary dark:text-primary">
               {stat.value}
             </div>
             <div className="text-sm text-muted-foreground">{stat.name}</div>

@@ -37,7 +37,7 @@ export function AchievementsSection() {
 
       <div className="h-2 w-full overflow-hidden rounded-full bg-muted mb-4">
         <div 
-          className="h-full rounded-full bg-nordic-forest progress-bar-animation" 
+          className="h-full rounded-full bg-secondary progress-bar-animation" 
           style={{ width: `${progressPercentage}%` }}
         ></div>
       </div>
@@ -48,14 +48,14 @@ export function AchievementsSection() {
             key={achievement.id}
             className={`rounded-lg border p-3 transition-all ${
               achievement.achieved 
-                ? "border-nordic-teal/50 bg-nordic-teal/10 dark:border-nordic-teal/30 dark:bg-nordic-teal/5"
+                ? "border-accent/50 bg-accent/10 dark:border-accent/30 dark:bg-accent/5"
                 : "border-muted bg-muted/20 opacity-70"
             }`}
           >
             <div className="flex items-center justify-between">
               <div className="font-medium">{achievement.title}</div>
               {achievement.achieved && (
-                <div className="rounded-full bg-nordic-teal p-1">
+                <div className="rounded-full bg-accent p-1">
                   <Check className="h-3 w-3 text-white" />
                 </div>
               )}
