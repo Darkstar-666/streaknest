@@ -1,15 +1,15 @@
 
 import React from 'react';
-import { useHabit } from '@/contexts/HabitContext';
-import HabitCard from '@/components/HabitCard';
-import StatisticsSection from '@/components/StatisticsSection';
-import AchievementsSection from '@/components/AchievementsSection';
+import { useHabits } from '@/contexts/HabitContext';
+import { HabitCard } from '@/components/HabitCard';
+import { StatisticsSection } from '@/components/StatisticsSection';
+import { AchievementsSection } from '@/components/AchievementsSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PlusCircle } from 'lucide-react';
 
 const Index = () => {
-  const { habits, addHabit } = useHabit();
+  const { habits, addHabit } = useHabits();
   const [newHabitName, setNewHabitName] = React.useState('');
 
   const handleAddHabit = (e: React.FormEvent) => {

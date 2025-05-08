@@ -1,6 +1,5 @@
-
 import React from "react";
-import { useHabit } from "@/contexts/HabitContext";
+import { useHabits } from "@/contexts/HabitContext";
 import {
   LineChart,
   Line,
@@ -16,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 const Statistics = () => {
-  const { habits } = useHabit();
+  const { habits } = useHabits();
 
   // Calculate weekly data (last 7 days)
   const generateWeeklyData = () => {
