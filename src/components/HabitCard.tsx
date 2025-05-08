@@ -53,8 +53,8 @@ export function HabitCard({ habit }: { habit: Habit }) {
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-primary progress-bar-animation"
-              style={{ width: `${clampedProgress}%` }}
+              className="h-full rounded-full progress-bar-animation"
+              style={{ width: `${clampedProgress}%`, backgroundColor: 'hsl(var(--progress-bar))' }}
             ></div>
           </div>
         </div>
@@ -70,10 +70,10 @@ export function HabitCard({ habit }: { habit: Habit }) {
         )}
       </CardContent>
 
-      <CardFooter className="pt-2">
+      <CardFooter className="pt-2 flex justify-start">
         <Button 
           onClick={() => incrementHabit(habit.id)} 
-          className="w-full bg-secondary hover:bg-secondary/90 text-white"
+          className="dark:bg-[hsl(var(--track-button-dark))] dark:hover:bg-[hsl(var(--track-button-dark))/90] bg-[hsl(var(--track-button-light))] hover:bg-[hsl(var(--track-button-light))/90] text-white"
         >
           Track Progress
         </Button>

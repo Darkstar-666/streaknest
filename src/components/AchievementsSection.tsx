@@ -37,8 +37,8 @@ export function AchievementsSection() {
 
       <div className="h-2 w-full overflow-hidden rounded-full bg-muted mb-4">
         <div 
-          className="h-full rounded-full bg-secondary progress-bar-animation" 
-          style={{ width: `${progressPercentage}%` }}
+          className="h-full rounded-full progress-bar-animation" 
+          style={{ width: `${progressPercentage}%`, backgroundColor: 'hsl(var(--progress-bar))' }}
         ></div>
       </div>
 
