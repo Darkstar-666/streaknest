@@ -10,6 +10,7 @@ export type Habit = {
   streak: number;
   lastTracked: string | null;
   achievements: Achievement[];
+  trackingData: { date: string }[]; // Add tracking data array to store dates when habit was tracked
 };
 
 export type Achievement = {
@@ -22,7 +23,7 @@ export type Achievement = {
 
 type HabitContextType = {
   habits: Habit[];
-  addHabit: (habit: Omit<Habit, "id" | "count" | "streak" | "lastTracked" | "achievements">) => void;
+  addHabit: (name: string) => void; // Changed to accept just a name string
   incrementHabit: (id: string) => void;
   resetCounts: () => void;
 };
@@ -36,6 +37,7 @@ const defaultHabits: Habit[] = [
     goal: 8,
     streak: 0,
     lastTracked: null,
+    trackingData: [], // Initialize empty tracking data
     achievements: [
       {
         id: "water-beginner",
@@ -68,6 +70,7 @@ const defaultHabits: Habit[] = [
     goal: 1,
     streak: 0,
     lastTracked: null,
+    trackingData: [], // Initialize empty tracking data
     achievements: [
       {
         id: "exercise-week",
@@ -93,6 +96,7 @@ const defaultHabits: Habit[] = [
     goal: 30,
     streak: 0,
     lastTracked: null,
+    trackingData: [], // Initialize empty tracking data
     achievements: [
       {
         id: "read-beginner",
@@ -124,25 +128,28 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("habits", JSON.stringify(habits));
   }, [habits]);
 
-  const addHabit = (habit: Omit<Habit, "id" | "count" | "streak" | "lastTracked" | "achievements">) => {
+  const addHabit = (name: string) => { // Changed to accept just a name string
     const newHabit: Habit = {
-      ...habit,
       id: Date.now().toString(),
+      name: name,
+      icon: "circle", // Default icon
       count: 0,
+      goal: 1, // Default goal
       streak: 0,
       lastTracked: null,
+      trackingData: [], // Initialize empty tracking data
       achievements: [
         {
-          id: `${habit.name.toLowerCase()}-starter`,
-          title: `${habit.name} Starter`,
-          description: `Complete ${habit.name.toLowerCase()} 5 times`,
+          id: `${name.toLowerCase()}-starter`,
+          title: `${name} Starter`,
+          description: `Complete ${name.toLowerCase()} 5 times`,
           threshold: 5,
           achieved: false,
         },
         {
-          id: `${habit.name.toLowerCase()}-master`,
-          title: `${habit.name} Master`,
-          description: `Complete ${habit.name.toLowerCase()} 20 times`,
+          id: `${name.toLowerCase()}-master`,
+          title: `${name} Master`,
+          description: `Complete ${name.toLowerCase()} 20 times`,
           threshold: 20,
           achieved: false,
         },
@@ -172,6 +179,12 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
             }
             return achievement;
           });
+
+          // Add tracking data entry for today
+          const newTrackingData = [...habit.trackingData];
+          if (!lastTracked || lastTracked !== today) {
+            newTrackingData.push({ date: today });
+          }
 
           // Show achievement notification if any were unlocked
           const newlyAchieved = updatedAchievements.filter(
@@ -205,6 +218,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
             count: newCount,
             streak: newStreak,
             lastTracked: today,
+            trackingData: newTrackingData,
             achievements: updatedAchievements,
           };
         }
