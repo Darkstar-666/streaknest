@@ -42,24 +42,59 @@ const defaultHabits: Habit[] = [
     trackingData: [], // Initialize empty tracking data
     achievements: [
       {
-        id: "water-beginner",
-        title: "Hydration Starter",
-        description: "Drink water 10 times",
-        threshold: 10,
+        id: "water-monday",
+        title: "Monday Hydration",
+        description: "Drink water on Monday",
+        threshold: 1,
         achieved: false,
       },
       {
-        id: "water-intermediate",
-        title: "Hydration Pro",
-        description: "Drink water 50 times",
-        threshold: 50,
+        id: "water-tuesday",
+        title: "Tuesday Hydration",
+        description: "Drink water on Tuesday",
+        threshold: 1,
         achieved: false,
       },
       {
-        id: "water-expert",
+        id: "water-wednesday",
+        title: "Wednesday Hydration",
+        description: "Drink water on Wednesday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "water-thursday",
+        title: "Thursday Hydration",
+        description: "Drink water on Thursday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "water-friday",
+        title: "Friday Hydration",
+        description: "Drink water on Friday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "water-saturday",
+        title: "Saturday Hydration",
+        description: "Drink water on Saturday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "water-sunday",
+        title: "Sunday Hydration",
+        description: "Drink water on Sunday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "water-month",
         title: "Hydration Master",
-        description: "Drink water 100 times",
-        threshold: 100,
+        description: "Drink water for 30 consecutive days",
+        threshold: 30,
         achieved: false,
       },
     ],
@@ -75,16 +110,58 @@ const defaultHabits: Habit[] = [
     trackingData: [], // Initialize empty tracking data
     achievements: [
       {
-        id: "exercise-week",
-        title: "Weekly Warrior",
-        description: "Exercise 7 times",
-        threshold: 7,
+        id: "exercise-monday",
+        title: "Monday Movement",
+        description: "Exercise on Monday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "exercise-tuesday",
+        title: "Tuesday Training",
+        description: "Exercise on Tuesday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "exercise-wednesday",
+        title: "Wednesday Workout",
+        description: "Exercise on Wednesday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "exercise-thursday",
+        title: "Thursday Toning",
+        description: "Exercise on Thursday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "exercise-friday",
+        title: "Friday Fitness",
+        description: "Exercise on Friday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "exercise-saturday",
+        title: "Saturday Strength",
+        description: "Exercise on Saturday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "exercise-sunday",
+        title: "Sunday Sweat",
+        description: "Exercise on Sunday",
+        threshold: 1,
         achieved: false,
       },
       {
         id: "exercise-month",
-        title: "Monthly Champion",
-        description: "Exercise 30 times",
+        title: "Fitness Champion",
+        description: "Exercise for 30 consecutive days",
         threshold: 30,
         achieved: false,
       },
@@ -101,17 +178,59 @@ const defaultHabits: Habit[] = [
     trackingData: [], // Initialize empty tracking data
     achievements: [
       {
-        id: "read-beginner",
-        title: "Bookworm Initiate",
-        description: "Read for 5 days",
-        threshold: 5,
+        id: "read-monday",
+        title: "Monday Reading",
+        description: "Read on Monday",
+        threshold: 1,
         achieved: false,
       },
       {
-        id: "read-intermediate",
-        title: "Literature Enthusiast",
-        description: "Read for 15 days",
-        threshold: 15,
+        id: "read-tuesday",
+        title: "Tuesday Tales",
+        description: "Read on Tuesday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "read-wednesday",
+        title: "Wednesday Words",
+        description: "Read on Wednesday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "read-thursday",
+        title: "Thursday Thinking",
+        description: "Read on Thursday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "read-friday",
+        title: "Friday Fiction",
+        description: "Read on Friday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "read-saturday",
+        title: "Saturday Stories",
+        description: "Read on Saturday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "read-sunday",
+        title: "Sunday Study",
+        description: "Read on Sunday",
+        threshold: 1,
+        achieved: false,
+      },
+      {
+        id: "read-month",
+        title: "Literature Master",
+        description: "Read for 30 consecutive days",
+        threshold: 30,
         achieved: false,
       },
     ],
@@ -155,17 +274,59 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
       trackingData: [], // Ensure trackingData is initialized as an empty array
       achievements: [
         {
-          id: `${name.toLowerCase()}-starter`,
-          title: `${name} Starter`,
-          description: `Complete ${name.toLowerCase()} 5 times`,
-          threshold: 5,
+          id: `${name.toLowerCase()}-monday`,
+          title: `Monday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Monday`,
+          threshold: 1,
           achieved: false,
         },
         {
-          id: `${name.toLowerCase()}-master`,
+          id: `${name.toLowerCase()}-tuesday`,
+          title: `Tuesday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Tuesday`,
+          threshold: 1,
+          achieved: false,
+        },
+        {
+          id: `${name.toLowerCase()}-wednesday`,
+          title: `Wednesday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Wednesday`,
+          threshold: 1,
+          achieved: false,
+        },
+        {
+          id: `${name.toLowerCase()}-thursday`,
+          title: `Thursday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Thursday`,
+          threshold: 1,
+          achieved: false,
+        },
+        {
+          id: `${name.toLowerCase()}-friday`,
+          title: `Friday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Friday`,
+          threshold: 1,
+          achieved: false,
+        },
+        {
+          id: `${name.toLowerCase()}-saturday`,
+          title: `Saturday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Saturday`,
+          threshold: 1,
+          achieved: false,
+        },
+        {
+          id: `${name.toLowerCase()}-sunday`,
+          title: `Sunday ${name}`,
+          description: `Complete ${name.toLowerCase()} on Sunday`,
+          threshold: 1,
+          achieved: false,
+        },
+        {
+          id: `${name.toLowerCase()}-month`,
           title: `${name} Master`,
-          description: `Complete ${name.toLowerCase()} 20 times`,
-          threshold: 20,
+          description: `Complete ${name.toLowerCase()} for 30 consecutive days`,
+          threshold: 30,
           achieved: false,
         },
       ],
@@ -179,6 +340,8 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
         if (habit.id === id) {
           const today = new Date().toISOString().split("T")[0];
           const lastTracked = habit.lastTracked;
+          const dayOfWeek = new Date().getDay(); // 0 for Sunday, 1 for Monday, etc.
+          const weekday = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][dayOfWeek];
           
           // Check streak
           let newStreak = habit.streak;
@@ -189,7 +352,12 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
           // Update achievements
           const newCount = habit.count + 1;
           const updatedAchievements = habit.achievements.map((achievement) => {
-            if (!achievement.achieved && newCount >= achievement.threshold) {
+            // Check day-specific achievements
+            if (achievement.id.includes(weekday) && !achievement.achieved) {
+              return { ...achievement, achieved: true };
+            }
+            // Check consecutive days achievement (month)
+            if (achievement.id.includes('month') && !achievement.achieved && newStreak >= achievement.threshold) {
               return { ...achievement, achieved: true };
             }
             return achievement;

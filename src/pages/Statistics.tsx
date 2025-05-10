@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useHabits } from "@/contexts/HabitContext";
 import {
@@ -9,8 +10,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  BarChart,
-  Bar,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -109,7 +108,7 @@ const Statistics = () => {
       individualData.push({
         name: dayName,
         date: formattedDate,
-        count: count,
+        actual: count,
         goal: habit.goal
       });
     }
@@ -121,16 +120,16 @@ const Statistics = () => {
   const monthlyData = generateMonthlyData();
   const individualHabitData = generateIndividualHabitData(selectedHabit);
 
-  // Generate random colors for each habit
+  // Generate colors for each habit
   const getHabitColor = (index: number) => {
     const colors = [
-      "#8B5CF6", // Vivid Purple
-      "#D946EF", // Magenta Pink
-      "#F97316", // Bright Orange
-      "#0EA5E9", // Ocean Blue
-      "#33C3F0", // Bright Blue
-      "#10B981", // Emerald
+      "#8B5CF6", // Purple
+      "#D946EF", // Magenta
+      "#F97316", // Orange
+      "#0EA5E9", // Blue
+      "#10B981", // Green
       "#EC4899", // Pink
+      "#EAB308", // Yellow
     ];
     return colors[index % colors.length];
   };
@@ -166,26 +165,31 @@ const Statistics = () => {
             {selectedHabit && (
               <ChartContainer className="h-80" config={{}}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={individualHabitData}>
+                  <LineChart data={individualHabitData}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis dataKey="name" />
                     <YAxis allowDecimals={false} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend />
-                    <Bar 
-                      dataKey="count" 
+                    <Line 
+                      type="monotone"
+                      dataKey="actual" 
                       name="Actual" 
-                      fill="#8B5CF6" 
-                      radius={[4, 4, 0, 0]} 
+                      stroke="#8B5CF6" 
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 6 }}
                     />
-                    <Bar 
+                    <Line 
+                      type="monotone"
                       dataKey="goal" 
                       name="Goal" 
-                      fill="#D946EF" 
-                      radius={[4, 4, 0, 0]} 
-                      opacity={0.6} 
+                      stroke="#D946EF" 
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      dot={{ r: 4 }}
                     />
-                  </BarChart>
+                  </LineChart>
                 </ResponsiveContainer>
               </ChartContainer>
             )}
@@ -221,9 +225,11 @@ const Statistics = () => {
                         key={habit.id}
                         type="monotone"
                         dataKey={habit.name}
+                        name={habit.name}
                         stroke={getHabitColor(index)}
-                        activeDot={{ r: 8 }}
                         strokeWidth={2}
+                        dot={{ r: 4, fill: getHabitColor(index) }}
+                        activeDot={{ r: 6 }}
                       />
                     ))}
                   </LineChart>
@@ -255,9 +261,11 @@ const Statistics = () => {
                         key={habit.id}
                         type="monotone"
                         dataKey={habit.name}
+                        name={habit.name}
                         stroke={getHabitColor(index)}
-                        activeDot={{ r: 8 }}
                         strokeWidth={2}
+                        dot={{ r: 4, fill: getHabitColor(index) }}
+                        activeDot={{ r: 6 }}
                       />
                     ))}
                   </LineChart>
