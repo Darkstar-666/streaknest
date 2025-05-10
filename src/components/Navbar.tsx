@@ -1,87 +1,48 @@
-
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { ChartLine, Menu, Settings } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import * as React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useUser } from '@/contexts/UserContext';
+import { Home, BarChart2, Settings } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
-  
+  const { user } = useUser();
+  if (!user) return null;
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="mr-2">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <SheetHeader>
-              <SheetTitle>Menu</SheetTitle>
-            </SheetHeader>
-            <nav className="flex flex-col gap-4 mt-8">
-              <Link 
-                to="/"
-                className={`flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent ${
-                  location.pathname === "/" ? "bg-accent" : ""
-                }`}
-              >
-                Home
-              </Link>
-              <Link 
-                to="/statistics"
-                className={`flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent ${
-                  location.pathname === "/statistics" ? "bg-accent" : ""
-                }`}
-              >
-                <ChartLine className="h-5 w-5" />
-                Statistics
-              </Link>
-              <Link 
-                to="/manage-habits"
-                className={`flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent ${
-                  location.pathname === "/manage-habits" ? "bg-accent" : ""
-                }`}
-              >
-                <Settings className="h-5 w-5" />
-                Manage Habits
-              </Link>
-            </nav>
-          </SheetContent>
-        </Sheet>
-        
+      <nav className="container flex h-14 items-center px-4" aria-label="Main Navigation">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="font-bold text-lg">Habit Tracker</span>
+          <span className="font-bold text-lg">Streaknest</span>
         </Link>
-
         <div className="flex-1" />
-
         <div className="flex items-center gap-2">
+          <Link to="/">
+            <button
+              aria-label="Home"
+              className={`rounded-full p-2 transition-colors ${location.pathname === '/' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
+            >
+              <Home className="h-5 w-5" />
+            </button>
+          </Link>
           <Link to="/statistics">
-            <Button variant="ghost" size="icon">
-              <ChartLine className="h-5 w-5" />
-              <span className="sr-only">Statistics</span>
-            </Button>
+            <button
+              aria-label="Statistics"
+              className={`rounded-full p-2 transition-colors ${location.pathname === '/statistics' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
+            >
+              <BarChart2 className="h-5 w-5" />
+            </button>
           </Link>
           <Link to="/manage-habits">
-            <Button variant="ghost" size="icon">
+            <button
+              aria-label="Manage Habits"
+              className={`rounded-full p-2 transition-colors ${location.pathname === '/manage-habits' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
+            >
               <Settings className="h-5 w-5" />
-              <span className="sr-only">Manage Habits</span>
-            </Button>
+            </button>
           </Link>
           <ThemeToggle />
         </div>
-      </div>
+      </nav>
     </header>
   );
 };
