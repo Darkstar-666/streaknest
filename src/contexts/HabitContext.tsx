@@ -1,3 +1,4 @@
+
 import { createContext, useState, useContext, useEffect } from "react";
 
 export type Habit = {
@@ -121,8 +122,21 @@ const HabitContext = createContext<HabitContextType | undefined>(undefined);
 
 export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
   const [habits, setHabits] = useState<Habit[]>(() => {
-    const savedHabits = localStorage.getItem("habits");
-    return savedHabits ? JSON.parse(savedHabits) : defaultHabits;
+    try {
+      const savedHabits = localStorage.getItem("habits");
+      // Make sure to initialize trackingData as an array if it doesn't exist
+      if (savedHabits) {
+        const parsedHabits = JSON.parse(savedHabits);
+        return parsedHabits.map((habit: any) => ({
+          ...habit,
+          trackingData: Array.isArray(habit.trackingData) ? habit.trackingData : []
+        }));
+      }
+      return defaultHabits;
+    } catch (error) {
+      console.error("Error loading habits from localStorage:", error);
+      return defaultHabits;
+    }
   });
 
   useEffect(() => {
@@ -138,7 +152,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
       goal: 1, // Default goal
       streak: 0,
       lastTracked: null,
-      trackingData: [], // Initialize empty tracking data
+      trackingData: [], // Ensure trackingData is initialized as an empty array
       achievements: [
         {
           id: `${name.toLowerCase()}-starter`,
@@ -182,7 +196,8 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
           });
 
           // Add tracking data entry for today
-          const newTrackingData = [...habit.trackingData];
+          // Ensure habit.trackingData is an array before adding to it
+          const newTrackingData = Array.isArray(habit.trackingData) ? [...habit.trackingData] : [];
           if (!lastTracked || lastTracked !== today) {
             newTrackingData.push({ date: today });
           }

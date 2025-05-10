@@ -37,8 +37,8 @@ const Statistics = () => {
       };
       
       habits.forEach(habit => {
-        // Safely check if trackingData exists before filtering
-        const count = habit.trackingData ? habit.trackingData.filter(item => 
+        // Safely check if trackingData exists and is an array before filtering
+        const count = Array.isArray(habit.trackingData) ? habit.trackingData.filter(item => 
           new Date(item.date).toISOString().split('T')[0] === dayData.date
         ).length : 0;
         
@@ -69,8 +69,8 @@ const Statistics = () => {
       };
       
       habits.forEach(habit => {
-        // Safely check if trackingData exists before filtering
-        const count = habit.trackingData ? habit.trackingData.filter(item => {
+        // Safely check if trackingData exists and is an array before filtering
+        const count = Array.isArray(habit.trackingData) ? habit.trackingData.filter(item => {
           const date = new Date(item.date);
           return date >= weekStart && date <= weekEnd;
         }).length : 0;
@@ -101,8 +101,8 @@ const Statistics = () => {
       const formattedDate = date.toISOString().split('T')[0];
       const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
       
-      // Count entries for this day
-      const count = habit.trackingData ? habit.trackingData.filter(item => 
+      // Count entries for this day - check if trackingData is an array first
+      const count = Array.isArray(habit.trackingData) ? habit.trackingData.filter(item => 
         new Date(item.date).toISOString().split('T')[0] === formattedDate
       ).length : 0;
       
