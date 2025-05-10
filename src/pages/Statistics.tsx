@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useHabits } from "@/contexts/HabitContext";
 import {
@@ -33,9 +34,10 @@ const Statistics = () => {
       };
       
       habits.forEach(habit => {
-        const count = habit.trackingData.filter(item => 
+        // Safely check if trackingData exists before filtering
+        const count = habit.trackingData ? habit.trackingData.filter(item => 
           new Date(item.date).toISOString().split('T')[0] === dayData.date
-        ).length;
+        ).length : 0;
         
         dayData[habit.name] = count;
       });
@@ -64,10 +66,11 @@ const Statistics = () => {
       };
       
       habits.forEach(habit => {
-        const count = habit.trackingData.filter(item => {
+        // Safely check if trackingData exists before filtering
+        const count = habit.trackingData ? habit.trackingData.filter(item => {
           const date = new Date(item.date);
           return date >= weekStart && date <= weekEnd;
-        }).length;
+        }).length : 0;
         
         weekData[habit.name] = count;
       });
