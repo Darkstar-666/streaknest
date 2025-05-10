@@ -10,80 +10,85 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  AreaChart,
+  Area,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Statistics = () => {
   const { habits } = useHabits();
   const [selectedHabit, setSelectedHabit] = useState<string | null>(habits.length > 0 ? habits[0].id : null);
 
-  // Calculate weekly data (last 7 days)
-  const generateWeeklyData = () => {
+  // Calculate data for the last 7 days
+  const generateLast7DaysData = () => {
     const today = new Date();
-    const weeklyData = [];
+    const data = [];
     
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
       const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
+      const formattedDate = date.toISOString().split('T')[0];
       
       const dayData = {
         name: dayName,
-        date: date.toISOString().split('T')[0],
+        date: formattedDate,
       };
       
       habits.forEach(habit => {
-        // Safely check if trackingData exists and is an array before filtering
-        const count = Array.isArray(habit.trackingData) ? habit.trackingData.filter(item => 
-          new Date(item.date).toISOString().split('T')[0] === dayData.date
-        ).length : 0;
-        
-        dayData[habit.name] = count;
+        if (Array.isArray(habit.trackingData)) {
+          const count = habit.trackingData.filter(item => 
+            new Date(item.date).toISOString().split('T')[0] === formattedDate
+          ).length;
+          
+          dayData[`${habit.name}`] = count;
+          dayData[`${habit.name}Unit`] = habit.unit || "times";
+        }
       });
       
-      weeklyData.push(dayData);
+      data.push(dayData);
     }
     
-    return weeklyData;
+    return data;
   };
 
-  // Calculate monthly data (last 30 days grouped by week)
-  const generateMonthlyData = () => {
+  // Calculate monthly data (last 30 days)
+  const generateLast30DaysData = () => {
     const today = new Date();
-    const monthlyData = [];
+    const data = [];
     
-    for (let i = 3; i >= 0; i--) {
-      const weekEnd = new Date(today);
-      weekEnd.setDate(today.getDate() - (i * 7));
-      const weekStart = new Date(weekEnd);
-      weekStart.setDate(weekEnd.getDate() - 6);
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      const dayName = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
+      const formattedDate = date.toISOString().split('T')[0];
       
-      const weekData = {
-        name: `Week ${4-i}`,
-        start: weekStart.toISOString().split('T')[0],
-        end: weekEnd.toISOString().split('T')[0],
+      const dayData = {
+        name: dayName,
+        date: formattedDate,
       };
       
       habits.forEach(habit => {
-        // Safely check if trackingData exists and is an array before filtering
-        const count = Array.isArray(habit.trackingData) ? habit.trackingData.filter(item => {
-          const date = new Date(item.date);
-          return date >= weekStart && date <= weekEnd;
-        }).length : 0;
-        
-        weekData[habit.name] = count;
+        if (Array.isArray(habit.trackingData)) {
+          const count = habit.trackingData.filter(item => 
+            new Date(item.date).toISOString().split('T')[0] === formattedDate
+          ).length;
+          
+          dayData[`${habit.name}`] = count;
+          dayData[`${habit.name}Unit`] = habit.unit || "times";
+        }
       });
       
-      monthlyData.push(weekData);
+      data.push(dayData);
     }
     
-    return monthlyData;
+    return data;
   };
 
-  // Generate individual habit data for the selected habit
+  // Generate individual habit data for the selected habit (7 days)
   const generateIndividualHabitData = (habitId: string | null) => {
     if (!habitId) return [];
     
@@ -91,34 +96,36 @@ const Statistics = () => {
     if (!habit) return [];
     
     const today = new Date();
-    const individualData = [];
+    const data = [];
     
-    // Get last 14 days of data for the individual habit
-    for (let i = 13; i >= 0; i--) {
+    // Get last 7 days of data for the individual habit
+    for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
       const formattedDate = date.toISOString().split('T')[0];
       const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
       
-      // Count entries for this day - check if trackingData is an array first
+      // Count entries for this day
       const count = Array.isArray(habit.trackingData) ? habit.trackingData.filter(item => 
         new Date(item.date).toISOString().split('T')[0] === formattedDate
       ).length : 0;
       
-      individualData.push({
+      data.push({
         name: dayName,
         date: formattedDate,
         actual: count,
-        goal: habit.goal
+        goal: habit.goal,
+        unit: habit.unit || "times"
       });
     }
     
-    return individualData;
+    return data;
   };
 
-  const weeklyData = generateWeeklyData();
-  const monthlyData = generateMonthlyData();
+  const last7DaysData = generateLast7DaysData();
+  const last30DaysData = generateLast30DaysData();
   const individualHabitData = generateIndividualHabitData(selectedHabit);
+  const selectedHabitDetails = habits.find(h => h.id === selectedHabit);
 
   // Generate colors for each habit
   const getHabitColor = (index: number) => {
@@ -143,7 +150,7 @@ const Statistics = () => {
           <CardHeader>
             <CardTitle>Individual Habit Progress</CardTitle>
             <CardDescription>
-              View progress for a specific habit over the last 14 days
+              View progress for a specific habit over the last 7 days
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -162,32 +169,43 @@ const Statistics = () => {
               </Select>
             </div>
             
-            {selectedHabit && (
+            {selectedHabit && selectedHabitDetails && (
               <ChartContainer className="h-80" config={{}}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={individualHabitData}>
+                  <LineChart data={individualHabitData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis dataKey="name" />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip content={<CustomTooltip />} />
+                    <YAxis 
+                      allowDecimals={false} 
+                      label={{ 
+                        value: selectedHabitDetails.unit || "times", 
+                        angle: -90, 
+                        position: 'insideLeft' 
+                      }} 
+                    />
+                    <Tooltip 
+                      formatter={(value: number, name: string) => {
+                        return [`${value} ${selectedHabitDetails.unit || "times"}`, name === "actual" ? "Completed" : "Goal"];
+                      }} 
+                    />
                     <Legend />
                     <Line 
-                      type="monotone"
+                      type="monotone" 
                       dataKey="actual" 
-                      name="Actual" 
+                      name="Completed" 
                       stroke="#8B5CF6" 
-                      strokeWidth={2}
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
+                      strokeWidth={3}
+                      dot={{ r: 5, strokeWidth: 1 }}
+                      activeDot={{ r: 7, strokeWidth: 0 }}
                     />
                     <Line 
-                      type="monotone"
+                      type="monotone" 
                       dataKey="goal" 
-                      name="Goal" 
+                      name={`Goal (${selectedHabitDetails.goal} ${selectedHabitDetails.unit || "times"}/day)`}
                       stroke="#D946EF" 
                       strokeWidth={2}
                       strokeDasharray="5 5"
-                      dot={{ r: 4 }}
+                      dot={{ r: 4, fill: "#fff", strokeWidth: 2 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -199,40 +217,44 @@ const Statistics = () => {
 
       <Tabs defaultValue="weekly" className="w-full">
         <TabsList className="mb-4">
-          <TabsTrigger value="weekly">Weekly Report</TabsTrigger>
-          <TabsTrigger value="monthly">Monthly Report</TabsTrigger>
+          <TabsTrigger value="weekly">7-Day Report</TabsTrigger>
+          <TabsTrigger value="monthly">30-Day Report</TabsTrigger>
         </TabsList>
 
         <TabsContent value="weekly">
           <Card>
             <CardHeader>
-              <CardTitle>Weekly Habit Tracking</CardTitle>
+              <CardTitle>7-Day Habit Tracking</CardTitle>
               <CardDescription>
-                View your habit progress over the past 7 days
+                View your habit progress over the past week
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="h-80" config={{}}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weeklyData}>
+                  <AreaChart data={last7DaysData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis dataKey="name" />
                     <YAxis allowDecimals={false} />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip formatter={(value: number, name: string, props: any) => {
+                      const habitName = name;
+                      const unit = props.payload[`${habitName}Unit`] || "times";
+                      return [`${value} ${unit}`, habitName];
+                    }} />
                     <Legend />
                     {habits.map((habit, index) => (
-                      <Line
+                      <Area
                         key={habit.id}
                         type="monotone"
                         dataKey={habit.name}
-                        name={habit.name}
+                        name={`${habit.name} (${habit.unit || "times"})`}
+                        fill={getHabitColor(index)}
                         stroke={getHabitColor(index)}
+                        fillOpacity={0.3}
                         strokeWidth={2}
-                        dot={{ r: 4, fill: getHabitColor(index) }}
-                        activeDot={{ r: 6 }}
                       />
                     ))}
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </CardContent>
@@ -242,33 +264,41 @@ const Statistics = () => {
         <TabsContent value="monthly">
           <Card>
             <CardHeader>
-              <CardTitle>Monthly Habit Tracking</CardTitle>
+              <CardTitle>30-Day Habit Tracking</CardTitle>
               <CardDescription>
-                View your habit progress over the past 4 weeks
+                View your habit progress over the past month
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="h-80" config={{}}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={monthlyData}>
+                  <AreaChart data={last30DaysData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                    <XAxis dataKey="name" />
+                    <XAxis 
+                      dataKey="name" 
+                      interval="preserveStartEnd"
+                      tick={{ fontSize: 10 }}
+                    />
                     <YAxis allowDecimals={false} />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip formatter={(value: number, name: string, props: any) => {
+                      const habitName = name;
+                      const unit = props.payload[`${habitName}Unit`] || "times";
+                      return [`${value} ${unit}`, habitName];
+                    }} />
                     <Legend />
                     {habits.map((habit, index) => (
-                      <Line
+                      <Area
                         key={habit.id}
                         type="monotone"
                         dataKey={habit.name}
-                        name={habit.name}
+                        name={`${habit.name} (${habit.unit || "times"})`}
+                        fill={getHabitColor(index)}
                         stroke={getHabitColor(index)}
+                        fillOpacity={0.3}
                         strokeWidth={2}
-                        dot={{ r: 4, fill: getHabitColor(index) }}
-                        activeDot={{ r: 6 }}
                       />
                     ))}
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </CardContent>
@@ -277,27 +307,6 @@ const Statistics = () => {
       </Tabs>
     </div>
   );
-};
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-background p-3 border border-border rounded-md shadow-md">
-        <p className="text-sm font-medium mb-1">{label}</p>
-        {payload.map((item: any, index: number) => (
-          <div key={index} className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: item.color }}
-            />
-            <span className="text-sm">{item.name}: {item.value}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return null;
 };
 
 export default Statistics;

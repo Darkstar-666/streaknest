@@ -1,4 +1,3 @@
-
 import { createContext, useState, useContext, useEffect } from "react";
 
 export type Habit = {
@@ -7,6 +6,7 @@ export type Habit = {
   icon: string;
   count: number;
   goal: number;
+  unit: string; // Added unit field
   streak: number;
   lastTracked: string | null;
   achievements: Achievement[];
@@ -27,7 +27,7 @@ type HabitContextType = {
   incrementHabit: (id: string) => void;
   resetCounts: () => void;
   deleteHabit: (id: string) => void;
-  updateHabit: (id: string, name: string, goal: number) => void;
+  updateHabit: (id: string, name: string, goal: number, unit: string) => void; // Updated to include unit
 };
 
 const defaultHabits: Habit[] = [
@@ -37,6 +37,7 @@ const defaultHabits: Habit[] = [
     icon: "droplet",
     count: 0,
     goal: 8,
+    unit: "glasses", // Add default unit
     streak: 0,
     lastTracked: null,
     trackingData: [], // Initialize empty tracking data
@@ -105,6 +106,7 @@ const defaultHabits: Habit[] = [
     icon: "activity",
     count: 0,
     goal: 1,
+    unit: "sessions", // Add default unit
     streak: 0,
     lastTracked: null,
     trackingData: [], // Initialize empty tracking data
@@ -173,6 +175,7 @@ const defaultHabits: Habit[] = [
     icon: "book",
     count: 0,
     goal: 30,
+    unit: "minutes", // Add default unit
     streak: 0,
     lastTracked: null,
     trackingData: [], // Initialize empty tracking data
@@ -248,6 +251,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
         const parsedHabits = JSON.parse(savedHabits);
         return parsedHabits.map((habit: any) => ({
           ...habit,
+          unit: habit.unit || "times", // Provide default unit if not present
           trackingData: Array.isArray(habit.trackingData) ? habit.trackingData : []
         }));
       }
@@ -269,6 +273,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
       icon: "circle", // Default icon
       count: 0,
       goal: 1, // Default goal
+      unit: "times", // Default unit
       streak: 0,
       lastTracked: null,
       trackingData: [], // Ensure trackingData is initialized as an empty array
@@ -425,11 +430,11 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
     setHabits((prevHabits) => prevHabits.filter((habit) => habit.id !== id));
   };
 
-  const updateHabit = (id: string, name: string, goal: number) => {
+  const updateHabit = (id: string, name: string, goal: number, unit: string) => {
     setHabits((prevHabits) =>
       prevHabits.map((habit) =>
         habit.id === id
-          ? { ...habit, name: name, goal: goal }
+          ? { ...habit, name: name, goal: goal, unit: unit }
           : habit
       )
     );

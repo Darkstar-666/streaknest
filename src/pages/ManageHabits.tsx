@@ -13,6 +13,13 @@ import {
   DialogHeader, 
   DialogTitle 
 } from "@/components/ui/dialog";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 
 const ManageHabits = () => {
@@ -22,7 +29,22 @@ const ManageHabits = () => {
     id: string;
     name: string;
     goal: number;
+    unit: string;
   }>(null);
+
+  const unitOptions = [
+    { value: "times", label: "Times" },
+    { value: "minutes", label: "Minutes" },
+    { value: "hours", label: "Hours" },
+    { value: "km", label: "Kilometers" },
+    { value: "miles", label: "Miles" },
+    { value: "steps", label: "Steps" },
+    { value: "glasses", label: "Glasses" },
+    { value: "liters", label: "Liters" },
+    { value: "pages", label: "Pages" },
+    { value: "sessions", label: "Sessions" },
+    { value: "calories", label: "Calories" },
+  ];
 
   const handleAddHabit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,11 +58,12 @@ const ManageHabits = () => {
     }
   };
 
-  const handleOpenEdit = (habit: { id: string; name: string; goal: number }) => {
+  const handleOpenEdit = (habit: { id: string; name: string; goal: number; unit: string }) => {
     setEditingHabit({
       id: habit.id,
       name: habit.name,
       goal: habit.goal,
+      unit: habit.unit || "times" // Default to "times" if unit is not set
     });
   };
 
@@ -49,7 +72,8 @@ const ManageHabits = () => {
       updateHabit(
         editingHabit.id,
         editingHabit.name,
-        editingHabit.goal
+        editingHabit.goal,
+        editingHabit.unit
       );
       setEditingHabit(null);
       toast({
@@ -107,7 +131,9 @@ const ManageHabits = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium text-lg">{habit.name}</h3>
-                    <p className="text-muted-foreground">Goal: {habit.goal} per day</p>
+                    <p className="text-muted-foreground">
+                      Goal: {habit.goal} {habit.unit || "times"} per day
+                    </p>
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -154,22 +180,51 @@ const ManageHabits = () => {
                   }
                 />
               </div>
-              <div className="space-y-2">
-                <label htmlFor="goal" className="text-sm font-medium">
-                  Daily Goal
-                </label>
-                <Input
-                  id="goal"
-                  type="number"
-                  min="1"
-                  value={editingHabit.goal}
-                  onChange={(e) =>
-                    setEditingHabit({
-                      ...editingHabit,
-                      goal: parseInt(e.target.value) || 1,
-                    })
-                  }
-                />
+              
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="space-y-2 flex-1">
+                  <label htmlFor="goal" className="text-sm font-medium">
+                    Daily Goal
+                  </label>
+                  <Input
+                    id="goal"
+                    type="number"
+                    min="1"
+                    value={editingHabit.goal}
+                    onChange={(e) =>
+                      setEditingHabit({
+                        ...editingHabit,
+                        goal: parseInt(e.target.value) || 1,
+                      })
+                    }
+                  />
+                </div>
+                
+                <div className="space-y-2 flex-1">
+                  <label htmlFor="unit" className="text-sm font-medium">
+                    Unit
+                  </label>
+                  <Select
+                    value={editingHabit.unit}
+                    onValueChange={(value) => 
+                      setEditingHabit({
+                        ...editingHabit,
+                        unit: value
+                      })
+                    }
+                  >
+                    <SelectTrigger id="unit">
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {unitOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           )}
