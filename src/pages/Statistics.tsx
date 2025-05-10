@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useHabits } from "@/contexts/HabitContext";
 import {
   LineChart,
@@ -10,13 +9,17 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  BarChart,
+  Bar,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Statistics = () => {
   const { habits } = useHabits();
+  const [selectedHabit, setSelectedHabit] = useState<string | null>(habits.length > 0 ? habits[0].id : null);
 
   // Calculate weekly data (last 7 days)
   const generateWeeklyData = () => {
@@ -81,8 +84,42 @@ const Statistics = () => {
     return monthlyData;
   };
 
+  // Generate individual habit data for the selected habit
+  const generateIndividualHabitData = (habitId: string | null) => {
+    if (!habitId) return [];
+    
+    const habit = habits.find(h => h.id === habitId);
+    if (!habit) return [];
+    
+    const today = new Date();
+    const individualData = [];
+    
+    // Get last 14 days of data for the individual habit
+    for (let i = 13; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      const formattedDate = date.toISOString().split('T')[0];
+      const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
+      
+      // Count entries for this day
+      const count = habit.trackingData ? habit.trackingData.filter(item => 
+        new Date(item.date).toISOString().split('T')[0] === formattedDate
+      ).length : 0;
+      
+      individualData.push({
+        name: dayName,
+        date: formattedDate,
+        count: count,
+        goal: habit.goal
+      });
+    }
+    
+    return individualData;
+  };
+
   const weeklyData = generateWeeklyData();
   const monthlyData = generateMonthlyData();
+  const individualHabitData = generateIndividualHabitData(selectedHabit);
 
   // Generate random colors for each habit
   const getHabitColor = (index: number) => {
@@ -101,6 +138,60 @@ const Statistics = () => {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Statistics</h1>
+
+      <div className="mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Individual Habit Progress</CardTitle>
+            <CardDescription>
+              View progress for a specific habit over the last 14 days
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <Select value={selectedHabit || ""} onValueChange={(value) => setSelectedHabit(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a habit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {habits.map((habit) => (
+                    <SelectItem key={habit.id} value={habit.id}>
+                      {habit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {selectedHabit && (
+              <ChartContainer className="h-80" config={{}}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={individualHabitData}>
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                    <XAxis dataKey="name" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar 
+                      dataKey="count" 
+                      name="Actual" 
+                      fill="#8B5CF6" 
+                      radius={[4, 4, 0, 0]} 
+                    />
+                    <Bar 
+                      dataKey="goal" 
+                      name="Goal" 
+                      fill="#D946EF" 
+                      radius={[4, 4, 0, 0]} 
+                      opacity={0.6} 
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <Tabs defaultValue="weekly" className="w-full">
         <TabsList className="mb-4">

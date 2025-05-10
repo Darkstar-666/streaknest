@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { HabitProvider } from "@/contexts/HabitContext";
 import Index from "./pages/Index";
 import Statistics from "./pages/Statistics";
+import ManageHabits from "./pages/ManageHabits";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 
@@ -27,6 +28,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/statistics" element={<Statistics />} />
+                  <Route path="/manage-habits" element={<ManageHabits />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>

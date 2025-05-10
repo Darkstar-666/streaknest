@@ -1,4 +1,3 @@
-
 import { createContext, useState, useContext, useEffect } from "react";
 
 export type Habit = {
@@ -10,7 +9,7 @@ export type Habit = {
   streak: number;
   lastTracked: string | null;
   achievements: Achievement[];
-  trackingData: { date: string }[]; // Add tracking data array to store dates when habit was tracked
+  trackingData: { date: string }[]; // Array to store dates when habit was tracked
 };
 
 export type Achievement = {
@@ -23,9 +22,11 @@ export type Achievement = {
 
 type HabitContextType = {
   habits: Habit[];
-  addHabit: (name: string) => void; // Changed to accept just a name string
+  addHabit: (name: string) => void;
   incrementHabit: (id: string) => void;
   resetCounts: () => void;
+  deleteHabit: (id: string) => void;
+  updateHabit: (id: string, name: string, goal: number) => void;
 };
 
 const defaultHabits: Habit[] = [
@@ -128,7 +129,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("habits", JSON.stringify(habits));
   }, [habits]);
 
-  const addHabit = (name: string) => { // Changed to accept just a name string
+  const addHabit = (name: string) => { 
     const newHabit: Habit = {
       id: Date.now().toString(),
       name: name,
@@ -237,8 +238,22 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  const deleteHabit = (id: string) => {
+    setHabits((prevHabits) => prevHabits.filter((habit) => habit.id !== id));
+  };
+
+  const updateHabit = (id: string, name: string, goal: number) => {
+    setHabits((prevHabits) =>
+      prevHabits.map((habit) =>
+        habit.id === id
+          ? { ...habit, name: name, goal: goal }
+          : habit
+      )
+    );
+  };
+
   return (
-    <HabitContext.Provider value={{ habits, addHabit, incrementHabit, resetCounts }}>
+    <HabitContext.Provider value={{ habits, addHabit, incrementHabit, resetCounts, deleteHabit, updateHabit }}>
       {children}
     </HabitContext.Provider>
   );

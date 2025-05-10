@@ -1,9 +1,9 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ChartLine, Menu } from "lucide-react";
+import { ChartLine, Menu, Settings } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/sheet";
 
 const Navbar: React.FC = () => {
+  const location = useLocation();
+  
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
@@ -30,16 +32,29 @@ const Navbar: React.FC = () => {
             <nav className="flex flex-col gap-4 mt-8">
               <Link 
                 to="/"
-                className="flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent"
+                className={`flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent ${
+                  location.pathname === "/" ? "bg-accent" : ""
+                }`}
               >
                 Home
               </Link>
               <Link 
                 to="/statistics"
-                className="flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent"
+                className={`flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent ${
+                  location.pathname === "/statistics" ? "bg-accent" : ""
+                }`}
               >
                 <ChartLine className="h-5 w-5" />
                 Statistics
+              </Link>
+              <Link 
+                to="/manage-habits"
+                className={`flex items-center gap-2 px-2 py-1 text-lg font-medium rounded-md hover:bg-accent ${
+                  location.pathname === "/manage-habits" ? "bg-accent" : ""
+                }`}
+              >
+                <Settings className="h-5 w-5" />
+                Manage Habits
               </Link>
             </nav>
           </SheetContent>
@@ -56,6 +71,12 @@ const Navbar: React.FC = () => {
             <Button variant="ghost" size="icon">
               <ChartLine className="h-5 w-5" />
               <span className="sr-only">Statistics</span>
+            </Button>
+          </Link>
+          <Link to="/manage-habits">
+            <Button variant="ghost" size="icon">
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Manage Habits</span>
             </Button>
           </Link>
           <ThemeToggle />
