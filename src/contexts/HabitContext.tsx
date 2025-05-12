@@ -190,34 +190,6 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
 
-  // Memoize context value
-  const contextValue = React.useMemo(() => ({
-    habits,
-    isLoading,
-    error,
-    addHabit,
-    deleteHabit,
-    updateHabit,
-    resetHabitCount,
-    resetAllStreaks,
-    updateHabitReminder,
-    incrementHabit,
-  }), [habits, isLoading, error]);
-
-  // Optimize localStorage updates with debouncing
-  React.useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      try {
-        localStorage.setItem("habits", JSON.stringify(habits));
-      } catch (error) {
-        console.error('Failed to save habits:', error);
-        setError(error instanceof Error ? error : new Error('Failed to save habits'));
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [habits]);
-
   const addHabit = React.useCallback((name: string, icon: string) => {
     setHabits(prev => [
       ...prev,
@@ -302,6 +274,34 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
       };
     }));
   }, []);
+
+  // Memoize context value
+  const contextValue = React.useMemo(() => ({
+    habits,
+    isLoading,
+    error,
+    addHabit,
+    deleteHabit,
+    updateHabit,
+    resetHabitCount,
+    resetAllStreaks,
+    updateHabitReminder,
+    incrementHabit,
+  }), [habits, isLoading, error, addHabit, deleteHabit, updateHabit, resetHabitCount, resetAllStreaks, updateHabitReminder, incrementHabit]);
+
+  // Optimize localStorage updates with debouncing
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem("habits", JSON.stringify(habits));
+      } catch (error) {
+        console.error('Failed to save habits:', error);
+        setError(error instanceof Error ? error : new Error('Failed to save habits'));
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [habits]);
 
   return (
     <HabitContext.Provider value={contextValue}>
