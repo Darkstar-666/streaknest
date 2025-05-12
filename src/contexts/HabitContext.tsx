@@ -107,7 +107,7 @@ function validateHabit(h: unknown): Habit | null {
     icon: habit.icon,
     count: typeof habit.count === 'number' ? habit.count : 0,
     streak: typeof habit.streak === 'number' ? habit.streak : 0,
-    lastTracked: habit.lastTracked ?? null,
+    lastTracked: typeof habit.lastTracked === 'string' ? habit.lastTracked : null,
     trackingData: Array.isArray(habit.trackingData) 
       ? habit.trackingData.map(td => ({
           date: String(td.date),
@@ -124,8 +124,8 @@ function validateHabit(h: unknown): Habit | null {
         }))
       : generateDefaultAchievements(name),
     reminderEnabled: Boolean(habit.reminderEnabled),
-    reminderStart: habit.reminderStart as string | undefined,
-    reminderEnd: habit.reminderEnd as string | undefined,
+    reminderStart: typeof habit.reminderStart === 'string' ? habit.reminderStart : undefined,
+    reminderEnd: typeof habit.reminderEnd === 'string' ? habit.reminderEnd : undefined,
     reminderInterval: typeof habit.reminderInterval === 'number' ? habit.reminderInterval : undefined,
   };
 }
