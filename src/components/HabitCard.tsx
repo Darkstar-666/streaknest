@@ -4,21 +4,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { useHabits, Habit } from "@/contexts/HabitContext";
 
-// Memoize icon map to prevent unnecessary re-renders
-const iconMap = React.useMemo(() => ({
-  droplet: <Droplet className="h-6 w-6" />,
-  activity: <Activity className="h-6 w-6" />,
-  book: <Book className="h-6 w-6" />,
-  flame: <Flame className="h-6 w-6" />,
-  sprout: <Sprout className="h-6 w-6" />,
-  moon: <Moon className="h-6 w-6" />,
-  utensils: <Utensils className="h-6 w-6" />,
-  "graduation-cap": <GraduationCap className="h-6 w-6" />,
-  brush: <Brush className="h-6 w-6" />,
-  footprints: <Footprints className="h-6 w-6" />,
-  circle: <CirclePercent className="h-6 w-6" /> // fallback
-}), []);
-
 // Memoize the progress bar component
 const ProgressBar = React.memo(({ progress }: { progress: number }) => (
   <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -55,6 +40,21 @@ export const HabitCard = React.memo(({ habit, triggerCongrats }: { habit: Habit;
     habit.achievements.find(a => !a.achieved) || null,
     [habit.achievements]
   );
+
+  // Move iconMap inside the component and memoize it
+  const iconMap = React.useMemo(() => ({
+    droplet: <Droplet className="h-6 w-6" />,
+    activity: <Activity className="h-6 w-6" />,
+    book: <Book className="h-6 w-6" />,
+    flame: <Flame className="h-6 w-6" />,
+    sprout: <Sprout className="h-6 w-6" />,
+    moon: <Moon className="h-6 w-6" />,
+    utensils: <Utensils className="h-6 w-6" />,
+    "graduation-cap": <GraduationCap className="h-6 w-6" />,
+    brush: <Brush className="h-6 w-6" />,
+    footprints: <Footprints className="h-6 w-6" />,
+    circle: <CirclePercent className="h-6 w-6" /> // fallback
+  }), []);
 
   const handleTrackProgress = React.useCallback(() => {
     const willComplete = habit.count + 1 === habit.goal;
