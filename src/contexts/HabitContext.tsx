@@ -1,5 +1,6 @@
 import * as React from "react";
 
+<<<<<<< HEAD
 // Safe UUID generator with memoization
 const safeUUID = (() => {
   const cache = new Set<string>();
@@ -18,6 +19,19 @@ const safeUUID = (() => {
     return uuid;
   };
 })();
+=======
+// Safe UUID generator
+function safeUUID() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback: not cryptographically secure
+  return 'xxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+>>>>>>> 52c5ac57564a330718e40f76e6d958931b04e52c
 
 export type Habit = {
   id: string;
@@ -79,6 +93,7 @@ function generateDefaultAchievements(habitName: string) {
   ];
 }
 
+<<<<<<< HEAD
 // Optimize validateHabit with type guards
 function validateHabit(h: unknown): Habit | null {
   if (!h || typeof h !== 'object') return null;
@@ -125,6 +140,36 @@ function validateHabit(h: unknown): Habit | null {
     reminderStart: habit.reminderStart ?? undefined,
     reminderEnd: habit.reminderEnd ?? undefined,
     reminderInterval: typeof habit.reminderInterval === 'number' ? habit.reminderInterval : undefined,
+=======
+// Validate and sanitize a habit object
+function validateHabit(h: any): Habit | null {
+  if (!h || typeof h !== 'object') return null;
+  if (!h.id || !h.name || typeof h.goal !== 'number' || !h.unit || !h.icon) return null;
+  return {
+    id: String(h.id),
+    name: String(h.name),
+    goal: Number(h.goal),
+    unit: String(h.unit),
+    icon: String(h.icon),
+    count: typeof h.count === 'number' ? h.count : 0,
+    streak: typeof h.streak === 'number' ? h.streak : 0,
+    lastTracked: h.lastTracked ?? null,
+    trackingData: Array.isArray(h.trackingData) ? h.trackingData.map(td => ({
+      date: String(td.date),
+      count: typeof td.count === 'number' ? td.count : 0
+    })) : [],
+    achievements: Array.isArray(h.achievements) ? h.achievements.map(a => ({
+      id: String(a.id),
+      name: String(a.name),
+      description: String(a.description),
+      achieved: !!a.achieved,
+      threshold: typeof a.threshold === 'number' ? a.threshold : undefined
+    })) : generateDefaultAchievements(h.name),
+    reminderEnabled: !!h.reminderEnabled,
+    reminderStart: h.reminderStart ?? undefined,
+    reminderEnd: h.reminderEnd ?? undefined,
+    reminderInterval: typeof h.reminderInterval === 'number' ? h.reminderInterval : undefined,
+>>>>>>> 52c5ac57564a330718e40f76e6d958931b04e52c
   };
 }
 
@@ -181,6 +226,7 @@ function getStoredHabits(): Habit[] {
 }
 
 export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
+<<<<<<< HEAD
   const [habits, setHabits] = React.useState<Habit[]>(() => {
     const storedHabits = getStoredHabits();
     return storedHabits.length === 0 ? DEFAULT_HABITS : storedHabits;
@@ -216,6 +262,28 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
     return () => clearTimeout(timeoutId);
   }, [habits]);
 
+=======
+  const [habits, setHabits] = React.useState<Habit[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<Error | null>(null);
+
+  React.useEffect(() => {
+    const storedHabits = getStoredHabits();
+    if (storedHabits.length === 0) {
+      setHabits(DEFAULT_HABITS);
+    } else {
+      setHabits(storedHabits);
+    }
+    setIsLoading(false);
+  }, []);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem("habits", JSON.stringify(habits));
+    } catch {}
+  }, [habits]);
+
+>>>>>>> 52c5ac57564a330718e40f76e6d958931b04e52c
   const addHabit = React.useCallback((name: string, icon: string) => {
     setHabits(prev => [
       ...prev,
@@ -300,9 +368,28 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
       };
     }));
   }, []);
+<<<<<<< HEAD
 
   return (
     <HabitContext.Provider value={contextValue}>
+=======
+
+  const value = React.useMemo(() => ({
+    habits,
+    isLoading,
+    error,
+    addHabit,
+    deleteHabit,
+    updateHabit,
+    resetHabitCount,
+    resetAllStreaks,
+    updateHabitReminder,
+    incrementHabit,
+  }), [habits, isLoading, error, addHabit, deleteHabit, updateHabit, resetHabitCount, resetAllStreaks, updateHabitReminder, incrementHabit]);
+
+  return (
+    <HabitContext.Provider value={value}>
+>>>>>>> 52c5ac57564a330718e40f76e6d958931b04e52c
       {children}
     </HabitContext.Provider>
   );
@@ -310,9 +397,15 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
 
 // Optimize hook with memoization
 export const useHabits = () => {
+<<<<<<< HEAD
   const context = React.useContext(HabitContext);
   if (context === undefined) {
     throw new Error('useHabits must be used within a HabitProvider');
+=======
+  const ctx = React.useContext(HabitContext);
+  if (!ctx) {
+    throw new Error("useHabits must be used within a HabitProvider");
+>>>>>>> 52c5ac57564a330718e40f76e6d958931b04e52c
   }
-  return context;
+  return ctx;
 };
