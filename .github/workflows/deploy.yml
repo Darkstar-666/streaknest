@@ -28,15 +28,25 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Clean install dependencies
+      - name: Install Dependencies
         run: |
-          rm -rf node_modules package-lock.json
-          npm install
+          npm ci
+          npm prune --production
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          # Remove source maps to reduce size
+          find ./dist -name "*.map" -type f -delete
+          # Remove any symlinks
+          find ./dist -type l -delete
+          # Remove any hidden files
+          find ./dist -name ".*" -delete
+          # Remove any unnecessary files
+          rm -rf ./dist/.git ./dist/.github ./dist/node_modules
         env:
           VITE_BASE_URL: '/streaknest/'
+          NODE_ENV: 'production'
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -44,30 +54,14 @@ jobs:
           enablement: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check artifact size
-        run: |
-          du -sh ./dist
-          find ./dist -type l -ls
-          find ./dist -type f -ls
-
-      - name: Clean and prepare artifact
-        run: |
-          cd dist
-          # Remove any symlinks if they exist
-          find . -type l -delete
-          # Remove any hidden files
-          find . -name ".*" -delete
-          # Remove any unnecessary files
-          rm -rf .git .github node_modules
-          cd ..
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4.3.3
         with:
           name: github-pages
           path: './dist'
           compression-level: 9
+          retention-days: 1
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4.0.3
+        uses: actions/deploy-pages@v4.0.3 
