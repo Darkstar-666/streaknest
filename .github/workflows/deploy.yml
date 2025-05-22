@@ -74,8 +74,8 @@ jobs:
           path: |
             dist/index.html
             dist/assets/
-          compression-level: 9
-          retention-days: 1
+            compression-level: 9
+            retention-days: 1
 
       - name: Deploy to GitHub Pages
         id: deployment
